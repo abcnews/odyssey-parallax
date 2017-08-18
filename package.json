@@ -1,0 +1,29 @@
+{
+    "name": "parallax",
+    "version": "1.0.0",
+    "description": "A test for some parallax",
+    "license": "MIT",
+    "private": true,
+    "contributors": [
+        "Nathan Hoad <nathan@nathanhoad.net>"
+    ],
+    "aunty": {
+        "deploy": {
+            "contentftp": {
+                "files": "**",
+                "from": "build",
+                "to": "/www/res/sites/news-projects/<name>/<id>"
+            }
+        }
+    },
+    "scripts": {
+        "start": "aunty serve"
+    },
+    "devDependencies": {
+        "@abcnews/aunty": "^4.2.4"
+    },
+    "dependencies": {
+        "preact": "^8.2.1",
+        "preact-compat": "^3.16.0"
+    }
+}
