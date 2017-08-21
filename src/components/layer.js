@@ -42,14 +42,29 @@ class Layer extends Preact.Component {
 
     calc(property, defaultTo) {
         const { layer, distance } = this.props;
-        const p = layer.config[property];
+        const stops = layer.config[property];
 
-        if (!p) return defaultTo;
+        if (!stops) return defaultTo;
 
-        let range = p.to - p.from;
-        return p.from + range * (1 - distance);
+        // Get the first stop the is past this distance
+        let index = stops.findIndex(stop => stop[0] <= distance);
+        if (!index) index = 0;
 
-        // TODO, let this be a curve?
+        if (index === 0 || stops[index][0] === distance) {
+            return stops[index][1];
+        } else {
+            let previousStop = stops[index - 1]; // 1 -> 0.5 -> 0
+            let nextStop = stops[index]; // 1 -> 0.5 -> 0
+
+            let sizeOfStop = nextStop[0] - previousStop[0]; // 0.5
+            let distanceInStop = (distance - previousStop[0]) / sizeOfStop;
+
+            let minValue = previousStop[1];
+            let maxValue = nextStop[1];
+            let range = maxValue - minValue;
+
+            return minValue + range * distanceInStop;
+        }
     }
 
     render() {

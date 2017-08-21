@@ -20,11 +20,9 @@ function alternatingCaseToObject(string) {
 
         // Do some type guessing
         if (value.match(/(minus)?(\d+)to(minus)?(\d+)/)) {
-            value = value.split('to');
-            value = {
-                from: textNumbers(value[0]),
-                to: textNumbers(value[1])
-            };
+            value = value.split('to').map((value, index, all) => {
+                return [1 - index * (1 / (all.length - 1)), textNumbers(value)];
+            });
         } else if (parseFloat(value).toString() === value) {
             value = parseFloat(value);
         } else if (value === 'true' || value === 'yes') {
@@ -43,8 +41,6 @@ function alternatingCaseToObject(string) {
             o[key] = value;
         }
     });
-
-    console.log('object:', o);
 
     return o;
 }
