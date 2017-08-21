@@ -42,7 +42,7 @@ class Layer extends Preact.Component {
 
     calc(property, defaultTo) {
         const { layer, distance } = this.props;
-        const stops = layer.config[property];
+        const stops = layer.config[property.replace(/[^a-z]/, '')];
 
         if (!stops) return defaultTo;
 
@@ -83,11 +83,25 @@ class Layer extends Preact.Component {
         let scale = 1 + (1 * (zoom / 10) - 0.1);
         let y = -50 + minY + rangeY * distance + this.calc('y', 0);
 
-        let filter = [
-            `blur(${this.calc('blur', 0)}px)`,
-            `grayscale(${this.calc('grayscale', 0)})`,
-            `sepia(${this.calc('sepia', 0)})`
-        ].join(' ');
+        const filter = [
+            'blur(?px)',
+            'brightness(?)',
+            'contrast(?)',
+            'grayscale(?)',
+            'hue-rotate(?deg)',
+            'invert(?)',
+            'opacity(?)',
+            'saturate(?)',
+            'sepia(?)'
+        ]
+            .map(f => {
+                const value = this.calc(f.split('(')[0], 0);
+                if (value === 0) return null;
+
+                return f.replace('?', value);
+            })
+            .filter(f => f)
+            .join(' ');
 
         let x = -50 + this.calc('x', 0);
 
