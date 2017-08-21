@@ -1,3 +1,12 @@
+function textNumbers(value) {
+    return parseFloat(
+        value
+            .replace('minus', '-')
+            .replace('negative', '-')
+            .replace('point', '.')
+    );
+}
+
 function alternatingCaseToObject(string) {
     const config = string.match(/[A-Z]+[0-9a-z]+/g);
 
@@ -10,7 +19,13 @@ function alternatingCaseToObject(string) {
         key = key.toLowerCase();
 
         // Do some type guessing
-        if (parseFloat(value).toString() === value) {
+        if (value.match(/(minus)?(\d+)to(minus)?(\d+)/)) {
+            value = value.split('to');
+            value = {
+                from: textNumbers(value[0]),
+                to: textNumbers(value[1])
+            };
+        } else if (parseFloat(value).toString() === value) {
             value = parseFloat(value);
         } else if (value === 'true' || value === 'yes') {
             value = true;
@@ -28,6 +43,8 @@ function alternatingCaseToObject(string) {
             o[key] = value;
         }
     });
+
+    console.log('object:', o);
 
     return o;
 }

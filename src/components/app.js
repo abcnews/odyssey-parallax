@@ -31,7 +31,7 @@ class App extends Preact.Component {
 
         if (isVisible) {
             this.setState({
-                distance: 0 - bounds.top / bounds.height
+                distance: (1 + bounds.top / bounds.height) / 2
             });
         }
     }
@@ -40,12 +40,19 @@ class App extends Preact.Component {
         const { section } = this.props;
 
         return (
-            <div ref={el => (this.wrapper = el)} className={styles.wrapper}>
-                {section.layers.map(layer => {
-                    return (
-                        <Layer layer={layer} distance={this.state.distance} />
-                    );
-                })}
+            <div
+                ref={el => (this.wrapper = el)}
+                className={`Block is-right u-full ${styles.wrapper}`}>
+                <div className="Block-media is-fixed">
+                    {section.layers.map(layer => {
+                        return (
+                            <Layer
+                                layer={layer}
+                                distance={this.state.distance}
+                            />
+                        );
+                    })}
+                </div>
             </div>
         );
     }
