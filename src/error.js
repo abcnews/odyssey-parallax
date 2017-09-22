@@ -1,6 +1,6 @@
-const Preact = require('preact');
+const { h, Component } = require('preact');
 
-class ErrorBox extends Preact.Component {
+class ErrorBox extends Component {
     componentDidMount() {
         console.error(this.props.error);
     }
@@ -20,9 +20,7 @@ class ErrorBox extends Preact.Component {
 
         return (
             <div style={errorStyle}>
-                <pre>
-                    {this.props.error.stack}
-                </pre>
+                <pre>{this.props.error.stack}</pre>
             </div>
         );
     }

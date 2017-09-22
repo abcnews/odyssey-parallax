@@ -1,87 +1,81 @@
-const Preact = require('preact');
+const { h, Component } = require('preact');
 
 const styles = require('./layer.scss');
 
-class Layer extends Preact.Component {
+class Layer extends Component {
     constructor(props) {
         super(props);
 
+        this.hasTween = this.hasTween.bind(this);
         this.calc = this.calc.bind(this);
     }
 
-    componentDidMount() {
-        const { layer } = this.props;
+    hasTween(property) {
+        const { layer, orientation, timeline } = this.props;
 
-        if (!layer.nodes) return;
-
-        // Layer with depth 1 is the background and shouldn't mount
-        if (layer.config.depth === 1) {
-            const image = layer.nodes.find(n => n.tagName === 'IMG');
-            if (image && image.getAttribute('src')) {
-                this.backgroundImage = image.getAttribute('src');
-            }
-        } else {
-            layer.nodes.forEach(node => {
-                this.wrapper.appendChild(node);
-            });
-        }
-    }
-
-    componentWillUnmount() {
-        const { layer } = this.props;
-
-        if (!layer.nodes) return;
-
-        // Layer with depth 1 is the background and wasn't mounted
-        if (layer.config.depth > 1) {
-            layer.nodes.forEach(node => {
-                this.wrapper.removeChild(node);
-            });
-        }
+        return layer.getIn([orientation, 'tweens']).find(t => t.get('property') === property);
     }
 
     calc(property, defaultTo) {
-        const { layer, distance } = this.props;
-        const stops = layer.config[property.replace(/[^a-z]/, '')];
+        const { layer, orientation, timeline } = this.props;
 
-        if (!stops) return defaultTo;
+        const tween = layer.getIn([orientation, 'tweens']).find(t => t.get('property') === property);
 
-        // Get the first stop the is past this distance
-        let index = stops.findIndex(stop => stop[0] <= distance);
-        if (!index) index = 0;
+        if (!tween) return defaultTo;
 
-        if (index === 0 || stops[index][0] === distance) {
-            return stops[index][1];
+        const stops = tween.get('stops').toJS();
+        const index = Math.ceil((1 - timeline) * (stops.length - 1));
+        if (index === 0) {
+            return stops[index];
         } else {
-            let previousStop = stops[index - 1];
-            let nextStop = stops[index];
+            let sizeOfStop = 1 / (stops.length - 1);
+            let startOfStop = (index - 1) * sizeOfStop;
+            let endOfStop = index * sizeOfStop;
 
-            let sizeOfStop = nextStop[0] - previousStop[0];
-            let distanceInStop = (distance - previousStop[0]) / sizeOfStop;
+            let timelineInStop = (1 - timeline - startOfStop) / sizeOfStop;
 
-            let minValue = previousStop[1];
-            let maxValue = nextStop[1];
+            let minValue = stops[index - 1];
+            let maxValue = stops[index];
             let range = maxValue - minValue;
 
-            return minValue + range * distanceInStop;
+            return minValue + range * timelineInStop;
         }
     }
 
     render() {
-        const { layer, distance } = this.props;
-        const { config } = layer;
+        const { layer, orientation, timeline, layerParent } = this.props;
 
-        const d = config.depth - 1;
+        if (!layerParent) return <div />;
 
-        let minY = d * -5;
-        let maxY = d * 5;
+        let d = parseInt(layer.get('depth'));
+
+        if (isNaN(d)) d = 1;
+
+        let minY = d * -1;
+        let maxY = d * 1;
         let rangeY = Math.abs(maxY - minY);
 
         const rotate = this.calc('rotate', 0);
-        const zoom = this.calc('zoom', 1);
+        const zoom = d * 0.66 + this.calc('zoom', 1);
 
         let scale = 1 + (1 * (zoom / 10) - 0.1);
-        let y = -50 + minY + rangeY * distance + this.calc('y', 0);
+
+        // if there is an x tween then use that, or just normal x
+        let x = -50 + parseFloat(layer.getIn([orientation, 'x']));
+        if (this.hasTween('x')) {
+            x = -50 + this.calc('x', 0);
+        }
+        // map x to a position within the stage
+        x = layerParent.offsetWidth * (x / 100);
+
+        // if there is a y tween use that, or just normal y
+        const yParallax = minY + rangeY * timeline;
+        let y = -50 + parseFloat(layer.getIn([orientation, 'y'])) + yParallax;
+        if (this.hasTween('y')) {
+            y = -50 + this.calc('y', 0) + yParallax;
+        }
+        // map x to a position within the stage
+        y = layerParent.offsetHeight * (y / 100);
 
         const filter = [
             'blur(?px)',
@@ -95,38 +89,64 @@ class Layer extends Preact.Component {
             'sepia(?)'
         ]
             .map(f => {
-                const value = this.calc(f.split('(')[0], 0);
-                if (value === 0) return null;
-
-                return f.replace('?', value);
+                const value = this.calc(f.split('(')[0], null);
+                return value === null ? null : f.replace('?', value);
             })
             .filter(f => f)
             .join(' ');
 
-        let x = -50 + this.calc('x', 0);
-
-        let layerStyle = {
+        let wrapperStyle = {
+            width: layerParent.offsetWidth + 'px',
+            height: layerParent.offsetHeight + 'px',
             top: '50%',
             left: '50%',
-            transform: `translateX(${x}%) translateY(${y}%) scale(${scale}) rotate(${rotate}deg)`,
-            filter
+            transform: `translateX(${x}px) translateY(${y}px) scale(${scale}) rotate(${rotate}deg)`,
+            transformOrigin: '50% 50%',
+            filter,
+            mixBlendMode: layer.get('blendMode')
         };
 
-        if (d === 0) {
-            // This is the background layer
-            layerStyle.width = '100%';
-            layerStyle.height = '100%';
-            layerStyle.backgroundSize = 'cover';
-            layerStyle.backgroundPosition = '50% 50%';
-            layerStyle.backgroundImage = `url(${this.backgroundImage})`;
+        let mediaStyle = {
+            width: '100%'
+        };
+
+        if (layer.getIn([orientation, 'cover'])) {
+            // set images shortest side to be 100%
+            const imageRatio = layer.get('width') / layer.get('height');
+            const stageRatio = layerParent.offsetWidth / layerParent.offsetHeight;
+            const size = 100;
+            if (stageRatio >= imageRatio) {
+                // behave like landscape
+                mediaStyle.width = size + '%';
+            } else if (layerParent) {
+                // behave like portrait
+                const height = layerParent.offsetHeight * size / 100;
+                mediaStyle.width = parseFloat(layer.get('width')) * (height / layer.get('height')) + 'px';
+            }
+        } else {
+            const size = parseFloat(layer.getIn([orientation, 'size']));
+            if (orientation === 'landscape') {
+                mediaStyle.width = size + '%';
+            } else if (layerParent) {
+                const height = layerParent.offsetHeight * size / 100;
+                mediaStyle.width = parseFloat(layer.get('width')) * (height / layer.get('height')) + 'px';
+            }
+        }
+
+        let src = layer.get('image');
+        let media;
+        if (src.indexOf('.mp4') > -1) {
+            media = <video src={src} autoPlay loop />;
+        } else {
+            media = <img src={src} />;
         }
 
         return (
-            <div
-                ref={el => (this.wrapper = el)}
-                className={`${styles.wrapper}`}
-                style={layerStyle}
-            />
+            <div className={styles.wrapper} style={wrapperStyle}>
+                <div className={styles.media} style={mediaStyle}>
+                    {media}
+                </div>
+            </div>
         );
     }
 }

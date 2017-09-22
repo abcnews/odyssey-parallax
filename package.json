@@ -7,23 +7,16 @@
     "contributors": [
         "Nathan Hoad <nathan@nathanhoad.net>"
     ],
-    "aunty": {
-        "deploy": {
-            "contentftp": {
-                "files": "**",
-                "from": "build",
-                "to": "/www/res/sites/news-projects/<name>/<id>"
-            }
-        }
-    },
+    "aunty": "preact-app",
     "scripts": {
         "start": "aunty serve"
     },
     "devDependencies": {
-        "@abcnews/aunty": "^4.2.4"
+        "@abcnews/aunty": "^5.2.0"
     },
     "dependencies": {
-        "preact": "^8.2.1",
-        "preact-compat": "^3.16.0"
+        "immutable": "^3.8.1",
+        "preact": "^8.2.5",
+        "preact-compat": "^3.17.0"
     }
 }
