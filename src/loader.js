@@ -1,47 +1,40 @@
 const Immutable = require('immutable');
 
-let sections;
 function getSections() {
-    if (!sections) {
-        sections = window.__ODYSSEY__.utils.anchors
-            .getSections('parallax')
-            .map(section => {
-                console.log('what');
+  if (!window._parallaxes) {
+    window._parallaxes = window.__ODYSSEY__.utils.anchors
+      .getSections('parallax')
+      .map(section => {
+        try {
+          let interactive;
 
-                try {
-                    let interactive;
+          section.betweenNodes.forEach(node => {
+            if (node.getAttribute && node.hasAttribute('data-parallax-layers')) {
+              interactive = node;
+            } else if (node.tagName === 'DIV' && node.querySelector('[data-parallax-layers]')) {
+              interactive = node.querySelector('[data-parallax-layers]');
+            } else {
+              node.parentNode.removeChild(node);
+            }
+          });
 
-                    console.log('SECTION', section.betweenNodes);
+          section.layers = Immutable.fromJS(JSON.parse(interactive.getAttribute('data-config')));
+        } catch (e) {
+          // No layer data
+          return false;
+        }
 
-                    section.betweenNodes.forEach(node => {
-                        if (node.tagName === 'DIV' && node.querySelector('[data-parallax-layers]')) {
-                            interactive = node.querySelector('[data-parallax-layers]');
-                        } else {
-                            node.parentNode.removeChild(node);
-                        }
-                    });
+        // Create a node that we can mount onto
+        section.mountNode = document.createElement('div');
+        section.mountNode.className = 'u-full';
+        section.startNode.parentNode.insertBefore(section.mountNode, section.startNode);
 
-                    section.layers = Immutable.fromJS(JSON.parse(interactive.getAttribute('data-config')));
-                } catch (e) {
-                    console.log('ERROR', e);
+        return section;
+      })
+      .filter(s => s);
+  }
 
-                    // No layer data
-                    return false;
-                }
-
-                console.log('SECTION', section);
-
-                // Create a node that we can mount onto
-                section.mountNode = document.createElement('div');
-                section.mountNode.className = 'u-full';
-                section.startNode.parentNode.insertBefore(section.mountNode, section.startNode);
-
-                return section;
-            })
-            .filter(s => s);
-    }
-
-    return sections;
+  return window._parallaxes;
 }
 
 module.exports = { getSections };

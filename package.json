@@ -1,22 +1,22 @@
 {
-    "name": "parallax",
-    "version": "1.0.0",
-    "description": "A test for some parallax",
-    "license": "MIT",
-    "private": true,
-    "contributors": [
-        "Nathan Hoad <nathan@nathanhoad.net>"
-    ],
-    "aunty": "preact-app",
-    "scripts": {
-        "start": "aunty serve"
-    },
-    "devDependencies": {
-        "@abcnews/aunty": "^5.2.0"
-    },
-    "dependencies": {
-        "immutable": "^3.8.1",
-        "preact": "^8.2.5",
-        "preact-compat": "^3.17.0"
-    }
+  "name": "parallax",
+  "version": "1.0.0",
+  "description": "A test for some parallax",
+  "license": "MIT",
+  "private": true,
+  "contributors": [
+    "Nathan Hoad <nathan@nathanhoad.net>"
+  ],
+  "aunty": "preact-app",
+  "scripts": {
+    "start": "aunty serve"
+  },
+  "devDependencies": {
+    "@abcnews/aunty": "^5.2.0"
+  },
+  "dependencies": {
+    "immutable": "^3.8.1",
+    "preact": "^8.2.5",
+    "preact-compat": "^3.17.0"
+  }
 }
