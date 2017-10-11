@@ -1,13 +1,11 @@
 {
-  "name": "parallax",
+  "name": "odyssey-parallax",
   "version": "1.0.0",
-  "description": "A test for some parallax",
+  "description": "An Odyssey plugin for rendering a parallax",
   "license": "MIT",
   "private": true,
-  "contributors": [
-    "Nathan Hoad <nathan@nathanhoad.net>"
-  ],
-  "aunty": "preact-app",
+  "contributors": ["Nathan Hoad <nathan@nathanhoad.net>"],
+  "aunty": "react-app",
   "scripts": {
     "start": "aunty serve"
   },
@@ -15,8 +13,7 @@
     "@abcnews/aunty": "^5.2.0"
   },
   "dependencies": {
-    "immutable": "^3.8.1",
-    "preact": "^8.2.5",
-    "preact-compat": "^3.17.0"
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
   }
 }

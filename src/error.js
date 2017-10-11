@@ -1,6 +1,6 @@
-const { h, Component } = require('preact');
+const React = require('react');
 
-class ErrorBox extends Component {
+class ErrorBox extends React.Component {
   componentDidMount() {
     console.error(this.props.error);
   }

@@ -1,5 +1,5 @@
-const { render, h } = require('preact');
-const Immutable = require('immutable');
+const React = require('react');
+const Dom = require('react-dom');
 
 const { getSections } = require('./loader');
 
@@ -11,7 +11,7 @@ const init = () => {
   const interactive = document.querySelector('.Header-media *[data-parallax-layers]');
   if (interactive) {
     const section = {
-      layers: Immutable.fromJS(JSON.parse(interactive.getAttribute('data-config')))
+      layers: JSON.parse(interactive.getAttribute('data-config'))
     };
 
     const mountNode = document.createElement('div');
@@ -23,7 +23,7 @@ const init = () => {
 
 let mount = (element, section) => {
   const App = require('./components/app');
-  render(<App layers={section.layers} />, element, element.lastChild);
+  Dom.render(<App layers={section.layers} />, element);
 };
 
 // Do some hot reload magic with errors
@@ -36,7 +36,7 @@ if (module.hot) {
     } catch (e) {
       // Render the error to the screen in place of the actual app
       const ErrorBox = require('./error');
-      render(<ErrorBox error={e} />, element, element.lastChild);
+      Dom.render(<ErrorBox error={e} />, element);
     }
   };
 

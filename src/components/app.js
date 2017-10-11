@@ -1,15 +1,16 @@
-const { h, Component } = require('preact');
+const React = require('react');
 
 const Layer = require('./layer');
 const styles = require('./app.scss');
 
-class App extends Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
 
     this.onViewportChanged = this.onViewportChanged.bind(this);
 
     this.state = {
+      layers: props.layers.reverse(),
       orientation: 'landscape',
       timeline: 0
     };
@@ -23,7 +24,7 @@ class App extends Component {
     __ODYSSEY__.scheduler.unsubscribe(this.onViewportChanged);
   }
 
-  onViewportChanged(viewport) {
+  onViewportChanged() {
     if (!this.wrapper) return;
 
     const bounds = this.wrapper.getBoundingClientRect();
@@ -39,31 +40,28 @@ class App extends Component {
 
     this.setState(state => {
       return {
-        orientation: Math.max(viewport.width, viewport.height) === viewport.width ? 'landscape' : 'portrait'
+        orientation: Math.max(window.innerWidth, window.innerHeight) === window.innerWidth ? 'landscape' : 'portrait'
       };
     });
   }
 
   render() {
-    const { layers } = this.props;
+    const { layers } = this.state;
 
     return (
       <div ref={el => (this.wrapper = el)} className={styles.wrapper}>
         <div className={styles.layers}>
-          {layers
-            .reverse()
-            .map(layer => {
-              return (
-                <Layer
-                  key={layer.get('id')}
-                  layer={layer}
-                  orientation={this.state.orientation}
-                  layerParent={this.wrapper}
-                  timeline={this.state.timeline}
-                />
-              );
-            })
-            .toJS()}
+          {layers.map((layer, index) => {
+            return (
+              <Layer
+                key={index}
+                layer={layer}
+                orientation={this.state.orientation}
+                layerParent={this.wrapper}
+                timeline={this.state.timeline}
+              />
+            );
+          })}
         </div>
       </div>
     );

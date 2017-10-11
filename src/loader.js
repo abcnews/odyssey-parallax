@@ -1,5 +1,3 @@
-const Immutable = require('immutable');
-
 function getSections() {
   if (!window._parallaxes) {
     window._parallaxes = window.__ODYSSEY__.utils.anchors
@@ -18,7 +16,7 @@ function getSections() {
             }
           });
 
-          section.layers = Immutable.fromJS(JSON.parse(interactive.getAttribute('data-config')));
+          section.layers = JSON.parse(interactive.getAttribute('data-config'));
         } catch (e) {
           // No layer data
           return false;
