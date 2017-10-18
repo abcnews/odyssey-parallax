@@ -1,10 +1,12 @@
 {
   "name": "odyssey-parallax",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An Odyssey plugin for rendering a parallax",
   "license": "MIT",
   "private": true,
-  "contributors": ["Nathan Hoad <nathan@nathanhoad.net>"],
+  "contributors": [
+    "Nathan Hoad <nathan@nathanhoad.net>"
+  ],
   "aunty": "react-app",
   "scripts": {
     "start": "aunty serve"
