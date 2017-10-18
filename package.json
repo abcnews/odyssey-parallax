@@ -10,7 +10,7 @@
     "start": "aunty serve"
   },
   "devDependencies": {
-    "@abcnews/aunty": "^5.2.0"
+    "@abcnews/aunty": "^5.7.1"
   },
   "dependencies": {
     "react": "^16.0.0",

@@ -10,14 +10,43 @@ class App extends React.Component {
     this.onViewportChanged = this.onViewportChanged.bind(this);
 
     this.state = {
+      imagesHaveLoaded: false,
       layers: props.layers.reverse(),
       orientation: 'landscape',
       timeline: 0
     };
+
+    this.imagesToLoad = this.state.layers.length;
   }
 
   componentDidMount() {
     __ODYSSEY__.scheduler.subscribe(this.onViewportChanged);
+
+    // Load images
+    this.state.layers.forEach(layer => {
+      if (layer.image.indexOf('.mp4') > -1) {
+        this.imagesToLoad--;
+      } else {
+        let img = document.createElement('img');
+        img.addEventListener('load', event => {
+          try {
+            this.imagesToLoad--;
+            if (this.imagesToLoad === 0) {
+              this.setState({ imagesHaveLoaded: true });
+            }
+          } catch (ex) {}
+        });
+        img.addEventListener('error', event => {
+          try {
+            this.imagesToLoad--;
+            if (this.imagesToLoad === 0) {
+              this.setState({ imagesHaveLoaded: true });
+            }
+          } catch (ex) {}
+        });
+        img.src = layer.image;
+      }
+    });
   }
 
   componentWillUnmount() {
@@ -51,17 +80,18 @@ class App extends React.Component {
     return (
       <div ref={el => (this.wrapper = el)} className={styles.wrapper}>
         <div className={styles.layers}>
-          {layers.map((layer, index) => {
-            return (
-              <Layer
-                key={index}
-                layer={layer}
-                orientation={this.state.orientation}
-                layerParent={this.wrapper}
-                timeline={this.state.timeline}
-              />
-            );
-          })}
+          {this.state.imagesHaveLoaded &&
+            layers.map((layer, index) => {
+              return (
+                <Layer
+                  key={index}
+                  layer={layer}
+                  orientation={this.state.orientation}
+                  layerParent={this.wrapper}
+                  timeline={this.state.timeline}
+                />
+              );
+            })}
         </div>
       </div>
     );
