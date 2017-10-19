@@ -1,6 +1,6 @@
 # Odyssey Parallax
 
-This module integrates with [Odyssey](https://stash.abc-dev.net.au/projects/NEWS/repos/odyssey/browse) to implement parallax sections in Odyssey based stories.
+This module is a plugin for [Odyssey](https://github.com/abcnews/odyssey) to implement parallax sections in Odyssey based stories.
 
 ## Normal usage
 
@@ -29,4 +29,4 @@ To use a parallax as the header then simply place the HTML fragment inside the `
 
 ## Authors
 
-- Nathan Hoad ([nathan@nathanhoad.net](mailto:nathan@nathanhoad.net))
+- Nathan Hoad ([hoad.nathan@abc.net.au](mailto:hoad.nathan@abc.net.au))
