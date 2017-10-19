@@ -37,3 +37,10 @@
   left: 0;
   width: 100%;
 }
+
+@media (max-device-width: 700px) and (orientation: portrait) {
+  .wrapper {
+    height: 100vh;
+    height: calc(var(--root-width) * 16 / 9);
+  }
+}
