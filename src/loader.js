@@ -1,38 +1,50 @@
+require('es6-promise');
+require('whatwg-fetch');
+
 function getSections() {
-  if (!window._parallaxes) {
-    window._parallaxes = window.__ODYSSEY__.utils.anchors
-      .getSections('parallax')
-      .map(section => {
-        try {
-          let interactive;
+  // grab #parallax anchors
+  const anchors = [].slice.call(document.querySelectorAll('a[name^=parallax]'));
 
-          section.betweenNodes.forEach(node => {
-            if (node.getAttribute && node.hasAttribute('data-parallax-layers')) {
-              interactive = node;
-            } else if (node.tagName === 'DIV' && node.querySelector('[data-parallax-layers]')) {
-              interactive = node.querySelector('[data-parallax-layers]');
-            } else {
-              node.parentNode.removeChild(node);
-            }
-          });
+  // grab old init-interactives
+  const interactives = [].slice.call(document.querySelectorAll('*[data-parallax-layers]'));
 
-          section.layers = JSON.parse(interactive.getAttribute('data-config'));
-        } catch (e) {
-          // No layer data
-          return false;
-        }
-
-        // Create a node that we can mount onto
-        section.mountNode = document.createElement('div');
-        section.mountNode.className = 'u-full';
-        section.startNode.parentNode.insertBefore(section.mountNode, section.startNode);
-
-        return section;
-      })
-      .filter(s => s);
-  }
-
-  return window._parallaxes;
+  // Process them all
+  const parallaxes = anchors.concat(interactives);
+  return Promise.all(parallaxes.map(parallax => getSection(parallax)).filter(n => n));
 }
 
-module.exports = { getSections };
+function getSection(startNode) {
+  let section = {
+    startNode
+  };
+
+  // load the layers if need be
+  return Promise.resolve()
+    .then(() => {
+      if (startNode.hasAttribute('data-config')) {
+        return JSON.parse(startNode.getAttribute('data-config'));
+      } else {
+        section.key = startNode.getAttribute('name').replace('parallax', '');
+        return fetch(`//www.abc.net.au/dat/news/interactives/parallaxative/${section.key}/config.json`).then(r =>
+          r.json()
+        );
+      }
+    })
+    .then(layers => {
+      section.layers = layers;
+
+      // Create a node that we can mount onto
+      section.mountNode = document.createElement('div');
+      section.mountNode.className = 'u-full';
+      section.startNode.parentNode.insertBefore(section.mountNode, section.startNode);
+
+      section.startNode.parentNode.removeChild(section.startNode);
+
+      return section;
+    })
+    .catch(err => {
+      console.log('Fetch err:', err);
+    });
+}
+
+module.exports = { getSections, getSection };

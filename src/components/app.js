@@ -7,7 +7,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.onViewportChanged = this.onViewportChanged.bind(this);
+    this.onScroll = this.onScroll.bind(this);
+    this.onLoadedImage = this.onLoadedImage.bind(this);
 
     this.state = {
       imagesHaveLoaded: false,
@@ -20,7 +21,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    __ODYSSEY__.scheduler.subscribe(this.onViewportChanged);
+    window.addEventListener('scroll', this.onScroll);
 
     // Load images
     this.state.layers.forEach(layer => {
@@ -28,42 +29,42 @@ class App extends React.Component {
         this.imagesToLoad--;
       } else {
         let img = document.createElement('img');
-        img.addEventListener('load', event => {
-          try {
-            this.imagesToLoad--;
-            if (this.imagesToLoad === 0) {
-              this.setState({ imagesHaveLoaded: true });
-            }
-          } catch (ex) {}
-        });
-        img.addEventListener('error', event => {
-          try {
-            this.imagesToLoad--;
-            if (this.imagesToLoad === 0) {
-              this.setState({ imagesHaveLoaded: true });
-            }
-          } catch (ex) {}
-        });
+        img.addEventListener('load', this.onLoadedImage);
+        img.addEventListener('error', this.onLoadedImage);
         img.src = layer.image;
       }
     });
   }
 
   componentWillUnmount() {
-    __ODYSSEY__.scheduler.unsubscribe(this.onViewportChanged);
+    window.removeEventListener('scroll', this.onScroll);
   }
 
-  onViewportChanged() {
+  onLoadedImage() {
+    try {
+      this.imagesToLoad--;
+      if (this.imagesToLoad === 0) {
+        this.setState({ imagesHaveLoaded: true }, () => {
+          // Do a scroll to force the timeline to update
+          this.onScroll();
+        });
+      }
+    } catch (ex) {}
+  }
+
+  onScroll() {
     if (!this.wrapper) return;
 
     const bounds = this.wrapper.getBoundingClientRect();
     const isVisible = bounds.top < bounds.height && (bounds.top > 0 || bounds.bottom > 0);
 
     if (isVisible) {
-      this.setState(state => {
-        return {
-          timeline: (1 + bounds.top / bounds.height) / 2
-        };
+      this.setState(() => {
+        // round the timeline position to hopefully avoid floating point nonsense
+        let timeline = (1 + bounds.top / bounds.height) / 2;
+        timeline = Math.round(timeline * 1000) / 1000;
+
+        return { timeline };
       });
     }
 

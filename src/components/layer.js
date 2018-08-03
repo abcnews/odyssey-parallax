@@ -25,6 +25,7 @@ class Layer extends React.Component {
 
     const stops = tween.stops;
     const index = Math.ceil((1 - timeline) * (stops.length - 1));
+
     if (index === 0) {
       return stops[index];
     } else {
@@ -33,6 +34,8 @@ class Layer extends React.Component {
       let endOfStop = index * sizeOfStop;
 
       let timelineInStop = (1 - timeline - startOfStop) / sizeOfStop;
+      // avoid floating point nonsense
+      timelineInStop = Math.round(timelineInStop * 1000) / 1000;
 
       let minValue = stops[index - 1];
       let maxValue = stops[index];
@@ -80,32 +83,14 @@ class Layer extends React.Component {
     // map y to a position within the stage
     y = layerParent.offsetHeight * (y / 100);
 
-    const filter = [
-      'blur(?px)',
-      'brightness(?)',
-      'contrast(?)',
-      'grayscale(?)',
-      'hue-rotate(?deg)',
-      'invert(?)',
-      'opacity(?)',
-      'saturate(?)',
-      'sepia(?)'
-    ]
-      .map(f => {
-        const value = this.calc(f.split('(')[0], null);
-        return value === null ? null : f.replace('?', value);
-      })
-      .filter(f => f)
-      .join(' ');
-
     let wrapperStyle = {
       width: layerParent.offsetWidth + 'px',
       height: layerParent.offsetHeight + 'px',
       top: '50%',
       left: '50%',
-      transform: `translate3d(${x}px, ${y}px, 0) scale(${scale}) rotate(${rotate}deg)`,
+      transform: `translate(${x}px, ${y}px) scale(${scale}) rotate(${rotate}deg)`,
       transformOrigin: '50% 50%',
-      filter,
+      opacity: this.calc('opacity', 1),
       mixBlendMode: layer.blendMode
     };
 
@@ -123,7 +108,7 @@ class Layer extends React.Component {
         mediaStyle.width = size + '%';
       } else if (layerParent) {
         // behave like portrait
-        const height = layerParent.offsetHeight * size / 100;
+        const height = (layerParent.offsetHeight * size) / 100;
         mediaStyle.width = parseFloat(layer.width) * (height / layer.height) + 'px';
       }
     } else {
@@ -131,7 +116,7 @@ class Layer extends React.Component {
       if (orientation === 'landscape') {
         mediaStyle.width = size + '%';
       } else if (layerParent) {
-        const height = layerParent.offsetHeight * size / 100;
+        const height = (layerParent.offsetHeight * size) / 100;
         mediaStyle.width = parseFloat(layer.width) * (height / layer.height) + 'px';
       }
     }

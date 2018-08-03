@@ -4,26 +4,23 @@ This module is a plugin for [Odyssey](https://github.com/abcnews/odyssey) to imp
 
 ## Normal usage
 
-To use this in a story, include it in the article body:
+To use this in a story, include it in the article body (where `name` is the key given to you from Keyframer):
 
 ```
 Some text before the parallax portion of the story starts.
 
-#parallax
-[HTML fragment containing the parallax config from Keyframer]
-...any images that should render in lieu of the parallax when syndicating...
-#endparallax
+#parallaxkey
 
 You can then carry on your story after the parallax section.
 ```
 
 ## Header usage
 
-To use a parallax as the header then simply place the HTML fragment inside the `#header` tags:
+To use a parallax as the header then simply place the hash marker inside the `#header` tags:
 
 ```
 #header
-[HTML frament containing the parallax config from Keyframer]
+#parallaxkey
 #endheader
 ```
 

@@ -4,16 +4,22 @@
   "description": "An Odyssey plugin for rendering a parallax section",
   "license": "MIT",
   "private": true,
-  "contributors": ["Nathan Hoad <nathan@nathanhoad.net>"],
-  "aunty": "react-app",
+  "contributors": [
+    "Nathan Hoad <nathan@nathanhoad.net>"
+  ],
   "scripts": {
     "start": "aunty serve"
   },
+  "aunty": {
+    "type": "react"
+  },
   "devDependencies": {
-    "@abcnews/aunty": "^5.7.1"
+    "@abcnews/aunty": "^9.5.1"
   },
   "dependencies": {
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0"
+    "es6-promise": "^4.2.4",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "whatwg-fetch": "^2.0.4"
   }
 }

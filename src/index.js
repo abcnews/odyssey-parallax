@@ -5,20 +5,9 @@ const { getSections } = require('./loader');
 
 const init = () => {
   // Load any actual parallax sections
-  getSections().forEach(section => mount(section.mountNode, section));
-
-  // See if there is one destined for the Header
-  const interactive = document.querySelector('.Header-media *[data-parallax-layers]');
-  if (interactive) {
-    const section = {
-      layers: JSON.parse(interactive.getAttribute('data-config'))
-    };
-
-    const mountNode = document.createElement('div');
-    interactive.parentNode.insertBefore(mountNode, interactive);
-
-    mount(mountNode, section);
-  }
+  getSections().then(sections => {
+    sections.forEach(section => mount(section.mountNode, section));
+  });
 };
 
 let mount = (element, section) => {
