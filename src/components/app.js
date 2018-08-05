@@ -9,6 +9,7 @@ class App extends React.Component {
 
     this.onScroll = this.onScroll.bind(this);
     this.onLoadedImage = this.onLoadedImage.bind(this);
+    this.updateTimeline = this.updateTimeline.bind(this);
 
     this.state = {
       imagesHaveLoaded: false,
@@ -46,15 +47,14 @@ class App extends React.Component {
       if (this.imagesToLoad === 0) {
         this.setState({ imagesHaveLoaded: true }, () => {
           // Do a scroll to force the timeline to update
-          this.onScroll();
+          this.updateTimeline();
         });
       }
     } catch (ex) {}
   }
 
-  onScroll() {
+  updateTimeline() {
     if (!this.wrapper) return;
-
     const bounds = this.wrapper.getBoundingClientRect();
     const isVisible = bounds.top < bounds.height && (bounds.top > 0 || bounds.bottom > 0);
 
@@ -68,11 +68,18 @@ class App extends React.Component {
       });
     }
 
-    this.setState(state => {
+    this.setState(() => {
       return {
         orientation: Math.max(window.innerWidth, window.innerHeight) === window.innerWidth ? 'landscape' : 'portrait'
       };
     });
+  }
+
+  onScroll() {
+    // If users have 'reduce motion' turned on then don't update on scroll
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    this.updateTimeline();
   }
 
   render() {
