@@ -1,6 +1,6 @@
 {
-  "name": "@abcnews/odyssey-parallax",
-  "version": "1.1.1",
+  "name": "odyssey-parallax",
+  "version": "1.1.2",
   "description": "An Odyssey plugin for rendering a parallax section",
   "license": "MIT",
   "private": true,
