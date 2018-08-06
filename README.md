@@ -4,7 +4,7 @@ This module is a plugin for [Odyssey](https://github.com/abcnews/odyssey) to imp
 
 ## Normal usage
 
-To use this in a story, include it in the article body (where `name` is the key given to you from Keyframer):
+To use this in a story, include it in the article body (where `key` is the key given to you from Keyframer):
 
 ```
 Some text before the parallax portion of the story starts.
