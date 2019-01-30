@@ -14,7 +14,7 @@
     "type": "react"
   },
   "devDependencies": {
-    "@abcnews/aunty": "^9.5.1"
+    "@abcnews/aunty": "^10.2.3"
   },
   "dependencies": {
     "es6-promise": "^4.2.4",

@@ -1,13 +1,8 @@
-:global(.is-layered) {
-  .wrapper {
-    height: 100% !important;
-  }
-}
-
 .wrapper {
   background: #222;
   height: 100vh;
   width: 100vw;
+  width: calc(100vw - var(--scrollbar-width, 0px)); /* odyssey sets --scrollbar-width */
   position: relative;
   overflow: hidden;
 
@@ -18,6 +13,10 @@
   line-height: 1.5;
 
   pointer-events: none;
+}
+
+:global(.is-layered) .wrapper {
+  height: 100% !important;
 }
 
 .layers {
@@ -36,11 +35,4 @@
   top: 0;
   left: 0;
   width: 100%;
-}
-
-@media (max-device-width: 700px) and (orientation: portrait) {
-  .wrapper {
-    height: 100vh;
-    height: calc(var(--root-width) * 16 / 9);
-  }
 }
