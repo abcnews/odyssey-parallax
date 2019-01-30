@@ -86,7 +86,7 @@ class App extends React.Component {
     const { layers } = this.state;
 
     return (
-      <div ref={el => (this.wrapper = el)} className={styles.wrapper}>
+      <div ref={el => (this.wrapper = el)} className={styles.wrapper} data-component="OdysseyParallax_App">
         <div className={styles.layers}>
           {this.state.imagesHaveLoaded &&
             layers.map((layer, index) => {

@@ -130,7 +130,7 @@ class Layer extends React.Component {
     }
 
     return (
-      <div className={styles.wrapper} style={wrapperStyle}>
+      <div className={styles.wrapper} style={wrapperStyle} data-component="OdysseyParallax_Layer">
         <div className={styles.media} style={mediaStyle}>
           {media}
         </div>
