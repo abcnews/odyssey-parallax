@@ -14,12 +14,12 @@
 		"type": "react"
 	},
 	"devDependencies": {
-		"@abcnews/aunty": "^10.2.3"
+		"@abcnews/aunty": "^11.4.0"
 	},
 	"dependencies": {
-		"es6-promise": "^4.2.4",
-		"react": "^16.4.1",
-		"react-dom": "^16.4.1",
-		"whatwg-fetch": "^2.0.4"
+		"@abcnews/env-utils": "^3.0.0",
+		"@abcnews/mount-utils": "^2.0.0",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2"
 	}
 }

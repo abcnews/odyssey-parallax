@@ -1,18 +1,19 @@
 const React = require('react');
-const Dom = require('react-dom');
+const {render} = require('react-dom');
+const App = require('./components/app');
+const {whenOdysseyLoaded} = require('@abcnews/env-utils')
 
 const { getSections } = require('./loader');
 
 const init = () => {
   // Load any actual parallax sections
-  getSections().then(sections => {
-    sections.forEach(section => mount(section.mountNode, section));
-  });
+  getSections().forEach(sectionPromise => sectionPromise.then(section => {
+    mount(section.mountNode, section);
+  }));
 };
 
 let mount = (element, section) => {
-  const App = require('./components/app');
-  Dom.render(<App layers={section.layers} />, element);
+  render(<App layers={section.layers} />, element);
 };
 
 // Do some hot reload magic with errors
@@ -35,8 +36,4 @@ if (module.hot) {
   });
 }
 
-if (window.__ODYSSEY__) {
-  init();
-} else {
-  window.addEventListener('odyssey:api', init);
-}
+whenOdysseyLoaded.then(init);

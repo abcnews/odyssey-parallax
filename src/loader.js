@@ -1,16 +1,7 @@
-require('es6-promise');
-require('whatwg-fetch');
+const {selectMounts, getMountValue} = require ('@abcnews/mount-utils')
 
 function getSections() {
-  // grab #parallax anchors
-  const anchors = [].slice.call(document.querySelectorAll('a[name^=parallax]'));
-
-  // grab old init-interactives
-  const interactives = [].slice.call(document.querySelectorAll('*[data-parallax-layers]'));
-
-  // Process them all
-  const parallaxes = anchors.concat(interactives);
-  return Promise.all(parallaxes.map(parallax => getSection(parallax)).filter(n => n));
+  return selectMounts('parallax').map(parallax => getSection(parallax));
 }
 
 function getSection(startNode) {
@@ -21,25 +12,17 @@ function getSection(startNode) {
   // load the layers if need be
   return Promise.resolve()
     .then(() => {
-      if (startNode.hasAttribute('data-config')) {
-        return JSON.parse(startNode.getAttribute('data-config'));
-      } else {
-        section.key = startNode.getAttribute('name').replace('parallax', '');
+      
+        section.key = getMountValue(startNode, 'parallax');
         return fetch(`//www.abc.net.au/dat/news/interactives/parallaxative/${section.key}/config.json`).then(r =>
           r.json()
         );
-      }
+      
     })
     .then(layers => {
       section.layers = layers;
-
-      // Create a node that we can mount onto
-      section.mountNode = document.createElement('div');
-      section.mountNode.className = 'u-full';
-      section.startNode.parentNode.insertBefore(section.mountNode, section.startNode);
-
-      section.startNode.parentNode.removeChild(section.startNode);
-
+      section.mountNode = section.startNode;
+      section.startNode.classList.add('u-full')
       return section;
     })
     .catch(err => {
