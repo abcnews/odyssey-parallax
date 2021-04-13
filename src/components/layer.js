@@ -1,8 +1,8 @@
-const React = require('react');
+import React, { Component } from 'react';
 
-const styles = require('./layer.scss');
+import { wrapper, media as _media } from './layer.scss';
 
-class Layer extends React.Component {
+class Layer extends Component {
   constructor(props) {
     super(props);
 
@@ -130,8 +130,8 @@ class Layer extends React.Component {
     }
 
     return (
-      <div className={styles.wrapper} style={wrapperStyle} data-component="OdysseyParallax_Layer">
-        <div className={styles.media} style={mediaStyle}>
+      <div className={wrapper} style={wrapperStyle} data-component="OdysseyParallax_Layer">
+        <div className={_media} style={mediaStyle}>
           {media}
         </div>
       </div>
@@ -139,4 +139,4 @@ class Layer extends React.Component {
   }
 }
 
-module.exports = Layer;
+export default Layer;

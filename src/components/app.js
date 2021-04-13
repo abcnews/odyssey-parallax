@@ -1,9 +1,9 @@
-const React = require('react');
+import React, { Component } from 'react';
 
-const Layer = require('./layer');
-const styles = require('./app.scss');
+import Layer from './layer';
+import { wrapper, layers as _layers } from './app.scss';
 
-class App extends React.Component {
+class App extends Component {
   constructor(props) {
     super(props);
 
@@ -86,8 +86,8 @@ class App extends React.Component {
     const { layers } = this.state;
 
     return (
-      <div ref={el => (this.wrapper = el)} className={styles.wrapper} data-component="OdysseyParallax_App">
-        <div className={styles.layers}>
+      <div ref={el => (this.wrapper = el)} className={wrapper} data-component="OdysseyParallax_App">
+        <div className={_layers}>
           {this.state.imagesHaveLoaded &&
             layers.map((layer, index) => {
               return (
@@ -106,4 +106,4 @@ class App extends React.Component {
   }
 }
 
-module.exports = App;
+export default App;

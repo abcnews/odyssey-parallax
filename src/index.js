@@ -1,13 +1,14 @@
-const React = require('react');
-const {render} = require('react-dom');
-const App = require('./components/app');
-const {whenOdysseyLoaded} = require('@abcnews/env-utils')
+import React from 'react';
+import { render } from 'react-dom';
+import App from './components/app';
+import { whenOdysseyLoaded } from '@abcnews/env-utils';
 
-const { getSections } = require('./loader');
+import { getSections } from './loader';
 
 const init = () => {
   // Load any actual parallax sections
   getSections().forEach(sectionPromise => sectionPromise.then(section => {
+    console.log('section :>> ', section);
     mount(section.mountNode, section);
   }));
 };
@@ -25,7 +26,7 @@ if (module.hot) {
       attemptMount(element, section);
     } catch (e) {
       // Render the error to the screen in place of the actual app
-      const ErrorBox = require('./error');
+      const ErrorBox = require('./error').default;
       Dom.render(<ErrorBox error={e} />, element);
     }
   };

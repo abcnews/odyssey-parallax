@@ -1,4 +1,4 @@
-const {selectMounts, getMountValue} = require ('@abcnews/mount-utils')
+import { selectMounts, getMountValue } from '@abcnews/mount-utils';
 
 function getSections() {
   return selectMounts('parallax').map(parallax => getSection(parallax));
@@ -30,4 +30,4 @@ function getSection(startNode) {
     });
 }
 
-module.exports = { getSections, getSection };
+export { getSections, getSection };
