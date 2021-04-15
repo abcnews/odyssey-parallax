@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import styles from './layer.scss';
 
 export enum Orientation {
-  LANDSCAPE= 'landscape',
+  LANDSCAPE = 'landscape',
   PORTRAIT = 'portrait'
 }
 
@@ -11,8 +11,8 @@ type TweenProperty = 'x' | 'y' | 'opacity' | 'zoom' | 'rotate';
 
 export type Tween = {
   property: TweenProperty;
-  stops: number[]
-}
+  stops: number[];
+};
 
 type LayerOrientationData = {
   size: number;
@@ -20,24 +20,40 @@ type LayerOrientationData = {
   y: number;
   cover: boolean;
   tweens: Tween[];
-}
+};
 
 export type LayerData = {
   depth: number;
   image: string;
   height: number;
   width: number;
-  blendMode:"normal" | "multiply" | "screen" | "overlay" | "darken" | "lighten" | "color-dodge" | "color-burn" | "hard-light" | "soft-light" | "difference" | "exclusion" | "hue" | "saturation" | "color" | "luminosity";
+  blendMode:
+    | 'normal'
+    | 'multiply'
+    | 'screen'
+    | 'overlay'
+    | 'darken'
+    | 'lighten'
+    | 'color-dodge'
+    | 'color-burn'
+    | 'hard-light'
+    | 'soft-light'
+    | 'difference'
+    | 'exclusion'
+    | 'hue'
+    | 'saturation'
+    | 'color'
+    | 'luminosity';
   landscape: LayerOrientationData;
   portrait: LayerOrientationData;
-}
+};
 
 type LayerProps = {
-  layer: LayerData,
+  layer: LayerData;
   layerParent: HTMLElement | null;
   orientation: Orientation;
   timeline: number;
-}
+};
 
 class Layer extends Component<LayerProps> {
   props: LayerProps;
@@ -53,7 +69,7 @@ class Layer extends Component<LayerProps> {
     return layer[orientation].tweens.filter(t => t.property === property)[0];
   }
 
-  calc(property:TweenProperty, defaultTo:number) {
+  calc(property: TweenProperty, defaultTo: number) {
     const { timeline } = this.props;
 
     const tween = this.getTween(property);

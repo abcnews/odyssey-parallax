@@ -8,9 +8,11 @@ import { LayerData } from './components/layer';
 
 const init = () => {
   // Load any actual parallax sections
-  getSections().forEach(sectionPromise => sectionPromise.then(({layers, mountNode}) => {
-    mount(mountNode, layers);
-  }));
+  getSections().forEach(sectionPromise =>
+    sectionPromise.then(({ layers, mountNode }) => {
+      mount(mountNode, layers);
+    })
+  );
 };
 
 let mount = (mountNode: Element, layers: LayerData[]) => {

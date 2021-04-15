@@ -4,21 +4,20 @@ import Layer, { LayerData, Orientation } from './layer';
 import styles from './app.scss';
 
 type AppProps = {
-  layers: LayerData[]
-}
+  layers: LayerData[];
+};
 
 type AppState = {
   imagesHaveLoaded: boolean;
   orientation: Orientation;
   timeline: number;
-  layers: LayerData[]
-}
+  layers: LayerData[];
+};
 
 class App extends Component<AppProps, AppState> {
-  
   imagesToLoad: number;
   wrapper: HTMLElement | null = null;
-  
+
   constructor(props: AppProps) {
     super(props);
 
@@ -85,7 +84,10 @@ class App extends Component<AppProps, AppState> {
 
     this.setState(() => {
       return {
-        orientation: Math.max(window.innerWidth, window.innerHeight) === window.innerWidth ? Orientation.LANDSCAPE : Orientation.PORTRAIT
+        orientation:
+          Math.max(window.innerWidth, window.innerHeight) === window.innerWidth
+            ? Orientation.LANDSCAPE
+            : Orientation.PORTRAIT
       };
     });
   }
