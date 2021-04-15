@@ -1,10 +1,25 @@
 import React, { Component } from 'react';
 
-import Layer from './layer';
-import { wrapper, layers as _layers } from './app.scss';
+import Layer, { LayerData, Orientation } from './layer';
+import styles from './app.scss';
 
-class App extends Component {
-  constructor(props) {
+type AppProps = {
+  layers: LayerData[]
+}
+
+type AppState = {
+  imagesHaveLoaded: boolean;
+  orientation: Orientation;
+  timeline: number;
+  layers: LayerData[]
+}
+
+class App extends Component<AppProps, AppState> {
+  
+  imagesToLoad: number;
+  wrapper: HTMLElement | null = null;
+  
+  constructor(props: AppProps) {
     super(props);
 
     this.onScroll = this.onScroll.bind(this);
@@ -14,7 +29,7 @@ class App extends Component {
     this.state = {
       imagesHaveLoaded: false,
       layers: props.layers.reverse(),
-      orientation: 'landscape',
+      orientation: Orientation.LANDSCAPE,
       timeline: 0
     };
 
@@ -70,7 +85,7 @@ class App extends Component {
 
     this.setState(() => {
       return {
-        orientation: Math.max(window.innerWidth, window.innerHeight) === window.innerWidth ? 'landscape' : 'portrait'
+        orientation: Math.max(window.innerWidth, window.innerHeight) === window.innerWidth ? Orientation.LANDSCAPE : Orientation.PORTRAIT
       };
     });
   }
@@ -86,8 +101,8 @@ class App extends Component {
     const { layers } = this.state;
 
     return (
-      <div ref={el => (this.wrapper = el)} className={wrapper} data-component="OdysseyParallax_App">
-        <div className={_layers}>
+      <div ref={el => (this.wrapper = el)} className={styles.wrapper} data-component="OdysseyParallax_App">
+        <div className={styles.layers}>
           {this.state.imagesHaveLoaded &&
             layers.map((layer, index) => {
               return (

@@ -4,17 +4,17 @@ import App from './components/app';
 import { whenOdysseyLoaded } from '@abcnews/env-utils';
 
 import { getSections } from './loader';
+import { LayerData } from './components/layer';
 
 const init = () => {
   // Load any actual parallax sections
-  getSections().forEach(sectionPromise => sectionPromise.then(section => {
-    console.log('section :>> ', section);
-    mount(section.mountNode, section);
+  getSections().forEach(sectionPromise => sectionPromise.then(({layers, mountNode}) => {
+    mount(mountNode, layers);
   }));
 };
 
-let mount = (element, section) => {
-  render(<App layers={section.layers} />, element);
+let mount = (mountNode: Element, layers: LayerData[]) => {
+  render(<App layers={layers} />, mountNode);
 };
 
 // Do some hot reload magic with errors
@@ -27,7 +27,7 @@ if (module.hot) {
     } catch (e) {
       // Render the error to the screen in place of the actual app
       const ErrorBox = require('./error').default;
-      Dom.render(<ErrorBox error={e} />, element);
+      render(<ErrorBox error={e} />, element);
     }
   };
 
