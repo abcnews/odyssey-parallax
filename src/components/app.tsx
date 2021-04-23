@@ -1,10 +1,24 @@
-const React = require('react');
+import React, { Component } from 'react';
 
-const Layer = require('./layer');
-const styles = require('./app.scss');
+import Layer, { LayerData, Orientation } from './layer';
+import styles from './app.scss';
 
-class App extends React.Component {
-  constructor(props) {
+type AppProps = {
+  layers: LayerData[];
+};
+
+type AppState = {
+  imagesHaveLoaded: boolean;
+  orientation: Orientation;
+  timeline: number;
+  layers: LayerData[];
+};
+
+class App extends Component<AppProps, AppState> {
+  imagesToLoad: number;
+  wrapper: HTMLElement | null = null;
+
+  constructor(props: AppProps) {
     super(props);
 
     this.onScroll = this.onScroll.bind(this);
@@ -14,7 +28,7 @@ class App extends React.Component {
     this.state = {
       imagesHaveLoaded: false,
       layers: props.layers.reverse(),
-      orientation: 'landscape',
+      orientation: Orientation.LANDSCAPE,
       timeline: 0
     };
 
@@ -70,7 +84,10 @@ class App extends React.Component {
 
     this.setState(() => {
       return {
-        orientation: Math.max(window.innerWidth, window.innerHeight) === window.innerWidth ? 'landscape' : 'portrait'
+        orientation:
+          Math.max(window.innerWidth, window.innerHeight) === window.innerWidth
+            ? Orientation.LANDSCAPE
+            : Orientation.PORTRAIT
       };
     });
   }
@@ -106,4 +123,4 @@ class App extends React.Component {
   }
 }
 
-module.exports = App;
+export default App;

@@ -1,6 +1,6 @@
-const React = require('react');
+import { Component } from 'react';
 
-class ErrorBox extends React.Component {
+class ErrorBox extends Component {
   componentDidMount() {
     console.error(this.props.error);
   }
@@ -26,4 +26,4 @@ class ErrorBox extends React.Component {
   }
 }
 
-module.exports = ErrorBox;
+export default ErrorBox;

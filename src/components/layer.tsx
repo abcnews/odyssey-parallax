@@ -1,23 +1,76 @@
-const React = require('react');
+import React, { Component } from 'react';
 
-const styles = require('./layer.scss');
+import styles from './layer.scss';
 
-class Layer extends React.Component {
-  constructor(props) {
+export enum Orientation {
+  LANDSCAPE = 'landscape',
+  PORTRAIT = 'portrait'
+}
+
+type TweenProperty = 'x' | 'y' | 'opacity' | 'zoom' | 'rotate';
+
+export type Tween = {
+  property: TweenProperty;
+  stops: number[];
+};
+
+type LayerOrientationData = {
+  size: number;
+  x: number;
+  y: number;
+  cover: boolean;
+  tweens: Tween[];
+};
+
+export type LayerData = {
+  depth: number;
+  image: string;
+  height: number;
+  width: number;
+  blendMode:
+    | 'normal'
+    | 'multiply'
+    | 'screen'
+    | 'overlay'
+    | 'darken'
+    | 'lighten'
+    | 'color-dodge'
+    | 'color-burn'
+    | 'hard-light'
+    | 'soft-light'
+    | 'difference'
+    | 'exclusion'
+    | 'hue'
+    | 'saturation'
+    | 'color'
+    | 'luminosity';
+  landscape: LayerOrientationData;
+  portrait: LayerOrientationData;
+};
+
+type LayerProps = {
+  layer: LayerData;
+  layerParent: HTMLElement | null;
+  orientation: Orientation;
+  timeline: number;
+};
+
+class Layer extends Component<LayerProps> {
+  props: LayerProps;
+  constructor(props: LayerProps) {
     super(props);
-
+    this.props = props;
     this.getTween = this.getTween.bind(this);
     this.calc = this.calc.bind(this);
   }
 
-  getTween(property) {
-    const { layer, orientation, timeline } = this.props;
-
+  getTween(property: TweenProperty) {
+    const { layer, orientation } = this.props;
     return layer[orientation].tweens.filter(t => t.property === property)[0];
   }
 
-  calc(property, defaultTo) {
-    const { layer, orientation, timeline } = this.props;
+  calc(property: TweenProperty, defaultTo: number) {
+    const { timeline } = this.props;
 
     const tween = this.getTween(property);
 
@@ -50,7 +103,7 @@ class Layer extends React.Component {
 
     if (!layerParent) return <div />;
 
-    let d = parseInt(layer.depth, 10);
+    let d = layer.depth;
 
     if (isNaN(d)) d = 1;
 
@@ -67,7 +120,7 @@ class Layer extends React.Component {
     }
 
     // if there is an x tween then use that, or just normal x
-    let x = -50 + parseFloat(layer[orientation].x);
+    let x = -50 + layer[orientation].x;
     if (this.getTween('x')) {
       x = -50 + this.calc('x', 0);
     }
@@ -76,7 +129,7 @@ class Layer extends React.Component {
 
     // if there is a y tween use that, or just normal y
     const yParallax = minY + rangeY * timeline;
-    let y = -50 + parseFloat(layer[orientation].y) + yParallax;
+    let y = -50 + layer[orientation].y + yParallax;
     if (this.getTween('y')) {
       y = -50 + this.calc('y', 0) + yParallax;
     }
@@ -109,15 +162,15 @@ class Layer extends React.Component {
       } else if (layerParent) {
         // behave like portrait
         const height = (layerParent.offsetHeight * size) / 100;
-        mediaStyle.width = parseFloat(layer.width) * (height / layer.height) + 'px';
+        mediaStyle.width = layer.width * (height / layer.height) + 'px';
       }
     } else {
-      const size = parseFloat(layer[orientation].size);
-      if (orientation === 'landscape') {
+      const size = layer[orientation].size;
+      if (orientation === Orientation.LANDSCAPE) {
         mediaStyle.width = size + '%';
       } else if (layerParent) {
         const height = (layerParent.offsetHeight * size) / 100;
-        mediaStyle.width = parseFloat(layer.width) * (height / layer.height) + 'px';
+        mediaStyle.width = layer.width * (height / layer.height) + 'px';
       }
     }
 
@@ -139,4 +192,4 @@ class Layer extends React.Component {
   }
 }
 
-module.exports = Layer;
+export default Layer;
