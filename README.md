@@ -24,6 +24,10 @@ To use a parallax as the header then simply place the hash marker inside the `#h
 #endheader
 ```
 
+## Legacy usage support
+
+Before `#parallaxkey` was supported, we had to embded the config in an HTML Fragment. These old usages have now been ported to the new method, with configs stored alongside their projects. [[Details]](https://github.com/abcnews/odyssey-parallax-legacy-configs)
+
 ## Authors
 
 - Nathan Hoad ([hoad.nathan@abc.net.au](mailto:hoad.nathan@abc.net.au))
