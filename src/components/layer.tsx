@@ -16,17 +16,17 @@ export type Tween = {
 
 type LayerOrientationData = {
   size: number;
-  x: number;
-  y: number;
+  x: number | string;
+  y: number | string;
   cover: boolean;
   tweens: Tween[];
 };
 
 export type LayerData = {
-  depth: number;
+  depth: number | string;
   image: string;
-  height: number;
-  width: number;
+  height: number | string;
+  width: number | string;
   blendMode:
     | 'normal'
     | 'multiply'
@@ -54,6 +54,9 @@ type LayerProps = {
   orientation: Orientation;
   timeline: number;
 };
+
+const ensureFloat = (value: string | number) => parseFloat(String(value));
+const ensureInt = (value: string | number) => parseInt(String(value), 10);
 
 class Layer extends Component<LayerProps> {
   props: LayerProps;
@@ -84,7 +87,6 @@ class Layer extends Component<LayerProps> {
     } else {
       let sizeOfStop = 1 / (stops.length - 1);
       let startOfStop = (index - 1) * sizeOfStop;
-      let endOfStop = index * sizeOfStop;
 
       let timelineInStop = (1 - timeline - startOfStop) / sizeOfStop;
       // avoid floating point nonsense
@@ -103,7 +105,7 @@ class Layer extends Component<LayerProps> {
 
     if (!layerParent) return <div />;
 
-    let d = layer.depth;
+    let d = ensureInt(layer.depth);
 
     if (isNaN(d)) d = 1;
 
@@ -120,7 +122,7 @@ class Layer extends Component<LayerProps> {
     }
 
     // if there is an x tween then use that, or just normal x
-    let x = -50 + layer[orientation].x;
+    let x = -50 + ensureFloat(layer[orientation].x);
     if (this.getTween('x')) {
       x = -50 + this.calc('x', 0);
     }
@@ -129,7 +131,7 @@ class Layer extends Component<LayerProps> {
 
     // if there is a y tween use that, or just normal y
     const yParallax = minY + rangeY * timeline;
-    let y = -50 + layer[orientation].y + yParallax;
+    let y = -50 + ensureFloat(layer[orientation].y) + yParallax;
     if (this.getTween('y')) {
       y = -50 + this.calc('y', 0) + yParallax;
     }
@@ -153,7 +155,7 @@ class Layer extends Component<LayerProps> {
 
     if (layer[orientation].cover) {
       // set images shortest side to be 100%
-      const imageRatio = layer.width / layer.height;
+      const imageRatio = ensureFloat(layer.width) / ensureFloat(layer.height);
       const stageRatio = layerParent.offsetWidth / layerParent.offsetHeight;
       const size = 100;
       if (stageRatio >= imageRatio) {
@@ -162,7 +164,7 @@ class Layer extends Component<LayerProps> {
       } else if (layerParent) {
         // behave like portrait
         const height = (layerParent.offsetHeight * size) / 100;
-        mediaStyle.width = layer.width * (height / layer.height) + 'px';
+        mediaStyle.width = ensureFloat(layer.width) * (height / ensureFloat(layer.height)) + 'px';
       }
     } else {
       const size = layer[orientation].size;
@@ -170,12 +172,12 @@ class Layer extends Component<LayerProps> {
         mediaStyle.width = size + '%';
       } else if (layerParent) {
         const height = (layerParent.offsetHeight * size) / 100;
-        mediaStyle.width = layer.width * (height / layer.height) + 'px';
+        mediaStyle.width = ensureFloat(layer.width) * (height / ensureFloat(layer.height)) + 'px';
       }
     }
 
     let src = layer.image;
-    let media;
+    let media: JSX.IntrinsicElements['img'] | JSX.IntrinsicElements['video'];
     if (src.indexOf('.mp4') > -1) {
       media = <video src={src} autoPlay loop />;
     } else {
