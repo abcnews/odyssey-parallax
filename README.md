@@ -27,3 +27,5 @@ To use a parallax as the header then simply place the hash marker inside the `#h
 ## Authors
 
 - Nathan Hoad ([hoad.nathan@abc.net.au](mailto:hoad.nathan@abc.net.au))
+- Simon Elvery ([simon@elvery.net](mailto:simon@elvery.net))
+- Colin Gourlay ([gourlay.colin@abc.net.au](mailto:gourlay.colin@abc.net.au))

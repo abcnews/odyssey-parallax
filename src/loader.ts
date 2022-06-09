@@ -1,15 +1,11 @@
 import { selectMounts, getMountValue, isMount } from '@abcnews/mount-utils';
-import { LayerData } from './components/layer';
+import type { LayerData } from './components/layer';
 
 type Section = {
   key: string;
   mountNode: Element;
   layers: LayerData[];
 };
-
-function getSections() {
-  return selectMounts('parallax').map(el => getSection(el));
-}
 
 function getSection(mountNode: Element): Promise<Section> {
   if (!isMount(mountNode)) {
@@ -31,4 +27,6 @@ function getSection(mountNode: Element): Promise<Section> {
     });
 }
 
-export { getSections, getSection };
+export function getSections() {
+  return selectMounts('parallax').map(el => getSection(el));
+}
