@@ -1,6 +1,6 @@
 {
 	"name": "odyssey-parallax",
-	"version": "2.1.1",
+	"version": "2.1.2",
 	"description": "An Odyssey plugin for rendering a parallax section",
 	"license": "MIT",
 	"private": true,
